@@ -34,8 +34,9 @@ export function activate(context: vscode.ExtensionContext) {
         editor.edit(eb => {
             eb.replace(selectionDetails.selection, bindingName);
             eb.insert(new vscode.Position(selectionDetails.line, 0), 
-                `${indentation}let ${bindingName} = ${selectionDetails.text}\r\n`)
-        })
+                `${indentation}let ${bindingName} = ${selectionDetails.text}\r\n`);
+            });
+        vscode.commands.executeCommand("editor.action.rename").then(res => console.log("rename"))
         
     });
     
