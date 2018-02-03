@@ -1,0 +1,63 @@
+{
+    "name": "fsrefactor-vscode",
+    "displayName": "fsrefactor",
+    "description": "F# refactoring tools for vscode",
+    "version": "0.0.1",
+    "publisher": "danmannock",
+    "author": "Dan Mannock",
+    "engines": {
+        "vscode": "^1.19.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "main": "./out/extension",
+    "activationEvents": [
+        "onCommand:extension.extractLet"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.extractLet",
+                "title": "Extract Let Binding",
+                "descriptin": "Extract expression to a let binding"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "extension.extractLet",
+                "key": "Ctrl+Shift+R"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dmannock/fsrefactor-vscode.git"
+    },
+    "keywords": [
+        "F#",
+        "FSharp",
+        "Functional",
+        "Functional Programming",
+        "Editor Tools",
+        "Tooling",
+        "Refactoring",
+        "Helpers",
+        "Visual Studio Code",
+        "vscode"
+    ]
+}
