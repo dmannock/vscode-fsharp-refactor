@@ -1,0 +1,12 @@
+//TODO: 
+//extracted inding naming - snippets
+//add to ctrl + .?
+//find more suitable hotkeys
+//context aware - use lang service?
+//future checks? vscode.window.activeTextEditor.document.languageId
+//extension settings
+//features: 
+//  inline
+//  args
+//  extract funcs
+//  convert similar types
