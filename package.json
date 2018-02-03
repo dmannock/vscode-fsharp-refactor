@@ -49,15 +49,10 @@
         "url": "https://github.com/dmannock/fsrefactor-vscode.git"
     },
     "keywords": [
-        "F#",
         "FSharp",
-        "Functional",
         "Functional Programming",
         "Editor Tools",
         "Tooling",
-        "Refactoring",
-        "Helpers",
-        "Visual Studio Code",
-        "vscode"
+        "Refactoring"
     ]
 }
