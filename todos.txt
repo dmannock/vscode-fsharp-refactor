@@ -1,5 +1,5 @@
 //TODO: 
-//extracted inlined naming - snippets
+//additional safeguards
 //add to ctrl + .?
 //find more suitable hotkeys
 //context aware - use lang service?

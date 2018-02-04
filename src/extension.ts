@@ -10,9 +10,9 @@ type SelectionDetails = {
 
 export function activate(context: vscode.ExtensionContext) {
     
-    console.log("F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#");
-    console.log("F#  FsRefactor extension active :)  F#");
-    console.log("F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#");
+    console.log("F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#");
+    console.log("F# Fsharp Refactor extension active :)  F#");
+    console.log("F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#");
 
     const disposable = vscode.commands.registerCommand('extension.extractLet', () => {
 

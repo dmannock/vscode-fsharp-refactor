@@ -1,6 +1,6 @@
 {
-    "name": "fsrefactor-vscode",
-    "displayName": "fsrefactor",
+    "name": "vscode-fsharp-refactor",
+    "displayName": "vscode fsharp refactor",
     "description": "F# refactoring tools for vscode",
     "version": "0.0.1",
     "publisher": "danmannock",
@@ -46,13 +46,13 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/dmannock/fsrefactor-vscode.git"
+        "url": "https://github.com/dmannock/vscode-fsharp-refactor.git"
     },
     "keywords": [
-        "FSharp",
-        "Functional Programming",
-        "Editor Tools",
-        "Tooling",
-        "Refactoring"
+        "fSharp",
+        "vscode",
+        "vscode-extension",
+        "tooling",
+        "refactoring"
     ]
 }
