@@ -29,33 +29,31 @@ export function activate(context: vscode.ExtensionContext) {
         if (!selectionDetails.range.isSingleLine) {
             return vscode.window.showWarningMessage("Multiple line selections are not supported");
         }
-        const bindingName = "extracted";
+        if (!selectionDetails.text) {
+            return vscode.window.showInformationMessage("Select the expression to extract");
+        }
+        const initialBindingName = "extracted";
         const indentation = getIndentation(doc, selectionDetails.line);
         editor.edit(eb => {
-            eb.replace(selectionDetails.selection, bindingName);
+            eb.replace(selectionDetails.selection, initialBindingName);
             eb.insert(new vscode.Position(selectionDetails.line, 0), 
-                `${indentation}let ${bindingName} = ${selectionDetails.text}\r\n`);
+                `${indentation}let ${initialBindingName} = ${selectionDetails.text}\r\n`);
             });
-        vscode.commands.executeCommand("editor.action.rename").then(res => console.log("rename"))
-        
+        vscode.commands.executeCommand("editor.action.rename")
     });
     
     context.subscriptions.push(disposable);
     
     function getSelection(sel: vscode.Selection[], doc: vscode.TextDocument): SelectionDetails {
-        //limit to one selection for initial POC
-        // for (let i = 0; i < sel.length; i++) {
-            const i = 0;
-            const selection = sel[i];
-            const range = new vscode.Range(selection.start, sel[i].end);
-            const text = doc.getText(range);
-            return {
-                text: text,
-                range: range,
-                line: range.start.line,
-                selection: selection
-            }
-        // }
+        const selection = sel[0];
+        const range = new vscode.Range(selection.start, selection.end);
+        const text = doc.getText(range);
+        return {
+            text: text,
+            range: range,
+            line: range.start.line,
+            selection: selection
+        }
     }
 
     function getIndentation(doc: vscode.TextDocument, line: number): string {
