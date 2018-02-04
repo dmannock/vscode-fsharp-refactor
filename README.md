@@ -1,4 +1,4 @@
-# fsrefactor-vscode README
+# Vscode-Fsharp-Refactor
 Additional F# refactoring tools for vscode. 
 Less keystrokes, more F#, more fun(ctional programming).
 
