@@ -13,7 +13,8 @@
     ],
     "main": "./out/extension",
     "activationEvents": [
-        "onCommand:extension.extractLet"
+        "onCommand:extension.extractLet",
+        "onCommand:extension.inlineLet"
     ],
     "contributes": {
         "commands": [
@@ -21,12 +22,21 @@
                 "command": "extension.extractLet",
                 "title": "Extract Let Binding",
                 "descriptin": "Extract expression to a let binding"
+            },
+            {
+                "command": "extension.inlineLet",
+                "title": "Inlines Binding",
+                "descriptin": "Inlines let binding to usages"
             }
         ],
         "keybindings": [
             {
                 "command": "extension.extractLet",
                 "key": "Ctrl+Shift+R"
+            },
+            {
+                "command": "extension.inlineLet",
+                "key": "Ctrl+Shift+I"
             }
         ]
     },
