@@ -18,6 +18,9 @@ export function activate(context: vscode.ExtensionContext) {
     
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('extension.extractLet', (editor) => {
         const { document, selections } = editor;
+        if (document.languageId != "fsharp") {
+            return;
+        }
         if (selections.length > 1) {
             return vscode.window.showWarningMessage("Multiple selection are not supported");
         }
@@ -45,6 +48,9 @@ export function activate(context: vscode.ExtensionContext) {
         //( )   1) find above with let binding (naive) s could go out of context 
         //( )   2) find other instances below if any
         const { document, selections } = editor;
+        if (document.languageId != "fsharp") {
+            return;
+        }
         if (selections.length > 1) {
             return vscode.window.showWarningMessage("Multiple selection are not supported");
         }
@@ -54,7 +60,10 @@ export function activate(context: vscode.ExtensionContext) {
         }
         const currentLine = document.lineAt(selectionDetails.line);
         const [, indentation, binding, bindingName, expression] = currentLine.text.match(/^(\s+)(let)\s+(\S+)\s+=\s+([\s\S]+)/)
-        const occurancesToReplace = getWordInstances(document, bindingName, selectionDetails.line + 1, currentLine.firstNonWhitespaceCharacterIndex)
+        const isDeclaration = !!binding;
+        const occurancesToReplace = isDeclaration 
+            ? getWordInstancesBelow(document, bindingName, selectionDetails.line + 1, currentLine.firstNonWhitespaceCharacterIndex)
+            : [];
 
         editor.edit(eb => {
             eb.delete(currentLine.rangeIncludingLineBreak);
@@ -116,7 +125,7 @@ export function activate(context: vscode.ExtensionContext) {
         return found;
     }
 
-    function getWordInstances(doc: vscode.TextDocument, word: string, startingLine: number, indentationCharCount: number): vscode.Position[] {
+    function getWordInstancesBelow(doc: vscode.TextDocument, word: string, startingLine: number, indentationCharCount: number): vscode.Position[] {
         const positions = [];
         for (let i = startingLine; i < doc.lineCount; i++) {
             const currentLine = doc.lineAt(i);

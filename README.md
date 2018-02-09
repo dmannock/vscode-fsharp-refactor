@@ -3,8 +3,17 @@ Additional F# refactoring tools for vscode.
 Less keystrokes, more F#, more fun(ctional programming).
 
 ## Features
-* Extract expression to let binding.
-* Inline binding
+### Extract
+Extract expression to let binding
+1. Select the expression to extract
+2. Use command (ctrl+shift+R)
+
+### Inline
+Inline binding 
+1. Move cursor to binding
+2. Use command (ctrl+shift+I)
+
+Note: you can customise the hotkeys (file > preference > keyboard shortcuts)
 
 ## Requirements
 If you are here you probably have this covered.
