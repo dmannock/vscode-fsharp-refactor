@@ -2,7 +2,7 @@
     "name": "vscode-fsharp-refactor",
     "displayName": "vscode fsharp refactor",
     "description": "F# refactoring tools for vscode",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "publisher": "danmannock",
     "author": "Dan Mannock",
     "engines": {
@@ -21,22 +21,40 @@
             {
                 "command": "extension.extractLet",
                 "title": "Extract Let Binding",
-                "descriptin": "Extract expression to a let binding"
+                "descriptin": "Extract expression to a let binding",
+                "category": "F#Refactor"
             },
             {
                 "command": "extension.inlineLet",
                 "title": "Inlines Binding",
-                "descriptin": "Inlines let binding to usages"
+                "descriptin": "Inlines let binding to usages",
+                "category": "F#Refactor"
             }
         ],
-        "keybindings": [
-            {
+        "menus": {
+            "commandPalette": [
+                {
                 "command": "extension.extractLet",
-                "key": "Ctrl+Shift+R"
+                "when": "editorHasSelection"
             },
             {
                 "command": "extension.inlineLet",
-                "key": "Ctrl+Shift+I"
+                "when": "editorTextFocus"
+            }
+        ]
+        },
+        "keybindings": [
+            {
+                "command": "extension.extractLet",
+                "key": "Ctrl+Shift+R",
+                "mac": "cmd+Shift+R",
+                "when": "editorHasSelection"
+            },
+            {
+                "command": "extension.inlineLet",
+                "key": "Ctrl+Shift+I",
+                "mac": "cmd+Shift+R",
+                "when": "editorTextFocus"
             }
         ]
     },
