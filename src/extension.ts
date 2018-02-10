@@ -125,7 +125,9 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     function getIndentation(doc: vscode.TextDocument, line: number): string {
-        return doc.lineAt(line).text.match(/^\s+/)[0];
+        const matched = doc.lineAt(line).text.match(/^\s+/);
+
+        return matched ? matched[0] : "";
     }
 
     function wordIndexesInText(text: string, toFind: string): number[] {
