@@ -11,6 +11,8 @@ type SelectionDetails = {
 type RangeProvider = (sel: vscode.Selection) => vscode.Range
 
 export function activate(context: vscode.ExtensionContext) {
+
+    const bindingLineRegex = /^(\s+)(let)\s+(\S+)\s+=\s+([\s\S]+)/;
     
     console.log("F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#");
     console.log("F# Fsharp Refactor extension active :)  F#");
@@ -41,12 +43,13 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerTextEditorCommand("extension.inlineLet", (editor) => {
         //(*) get cursor pos
         //(*) expand to whole word
-        //( ) is word @ let binding?
+        //(*) is word @ let binding?
         //(*) -> find all instances below (within context)
         //(*)    that have the sam eindentation or more
-        //( ) -> else it is one of the instances
-        //( )   1) find above with let binding (naive) s could go out of context 
-        //( )   2) find other instances below if any
+        //(*) -> else it is one of the instances
+        //(*)   1) find above with let binding (naive) s could go out of context 
+        //(*)   2) find other instances below if any
+        //TODO: refactor!
         const { document, selections } = editor;
         if (document.languageId != "fsharp") {
             return;
@@ -59,18 +62,31 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         const currentLine = document.lineAt(selectionDetails.line);
-        const [, indentation, binding, bindingName, expression] = currentLine.text.match(/^(\s+)(let)\s+(\S+)\s+=\s+([\s\S]+)/)
-        const isDeclaration = !!binding;
-        const occurancesToReplace = isDeclaration 
-            ? getWordInstancesBelow(document, bindingName, selectionDetails.line + 1, currentLine.firstNonWhitespaceCharacterIndex)
-            : [];
-
-        editor.edit(eb => {
-            eb.delete(currentLine.rangeIncludingLineBreak);
-            for (const range of occurancesToReplace) {
-                eb.replace(range, expression);
+        const matchedBindingLine = currentLine.text.match(bindingLineRegex)
+        if (matchedBindingLine) {
+            const [, indentation, binding, bindingName, expression] = matchedBindingLine;
+            const occurancesToReplace = getWordInstancesBelow(document, bindingName, selectionDetails.line + 1, currentLine.firstNonWhitespaceCharacterIndex);
+            editor.edit(eb => {
+                eb.delete(currentLine.rangeIncludingLineBreak);
+                for (const range of occurancesToReplace) {
+                    eb.replace(range, expression);
+                }
+            });
+        } else {
+            //naive initial concept
+            const matchedBindingLine = getBindingDeclarationAbove(document, selectionDetails.text, selectionDetails.line - 1, currentLine.firstNonWhitespaceCharacterIndex);
+            if (matchedBindingLine) {
+                const [, indentation, binding, bindingName, expression] = matchedBindingLine.matchedBindingLine;
+                const occurancesToReplace = getWordInstancesBelow(document, bindingName, matchedBindingLine.matchedLine.lineNumber + 1, matchedBindingLine.matchedLine.firstNonWhitespaceCharacterIndex);
+                editor.edit(eb => {
+                    eb.delete(matchedBindingLine.matchedLine.rangeIncludingLineBreak);
+                    for (const range of occurancesToReplace) {
+                        //wrapped in brackets to ensure precidence is preserved (without knowing usage context)
+                        eb.replace(range, `(${expression})`);
+                    }
+                });        
             }
-        });
+        }
 
     }));
 
@@ -137,6 +153,21 @@ export function activate(context: vscode.ExtensionContext) {
                 .forEach(position => positions.push(position));
         }
         return positions;
+    }
+
+    function getBindingDeclarationAbove(doc: vscode.TextDocument, word: string, startingLine: number, indentationCharCount: number) {
+        let currentLine: vscode.TextLine;
+        for (let i = startingLine; i >= 0; i--) {
+            currentLine = doc.lineAt(i);
+            if (currentLine.firstNonWhitespaceCharacterIndex > currentLine.firstNonWhitespaceCharacterIndex) {
+                break;
+            }
+            return {
+                matchedBindingLine: currentLine.text.match(bindingLineRegex),
+                matchedLine: currentLine
+            };
+        }
+        return null;
     }
 }
 
