@@ -10,7 +10,7 @@ Extract expression to let binding
 
 ### Inline
 Inline binding 
-1. Move cursor to binding
+1. Move cursor to binding or a usage
 2. Use command (ctrl+shift+I)
 
 Note: you can customise the hotkeys (file > preference > keyboard shortcuts)
