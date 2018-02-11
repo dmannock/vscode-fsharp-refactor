@@ -1,16 +1,16 @@
-'use strict';
-import * as vscode from 'vscode';
+"use strict";
+import * as vscode from "vscode";
 
 export const bindingLineRegex = /^(\s+)(let)\s+(\S+)\s+=\s+([\s\S]+)/;
 
-export type SelectionDetails = {
-    text: string,
-    range: vscode.Range,
-    line: number,
-    selection: vscode.Selection    
+export interface ISelectionDetails {
+    line: number;
+    range: vscode.Range;
+    selection: vscode.Selection;
+    text: string;
 }
 
-export function isSelectionValid(selectionDetails: SelectionDetails) {
+export function isSelectionValid(selectionDetails: ISelectionDetails) {
     if (!selectionDetails.range.isSingleLine) {
         return vscode.window.showWarningMessage("Multiple line selections are not supported");
     }
@@ -20,28 +20,28 @@ export function isSelectionValid(selectionDetails: SelectionDetails) {
     return true;
 }
 
-export function getExpandedSelection(sel: vscode.Selection[], doc: vscode.TextDocument): SelectionDetails {
+export function getExpandedSelection(sel: vscode.Selection[], doc: vscode.TextDocument): ISelectionDetails {
     const selection = sel[0];
     const wordRange = doc.getWordRangeAtPosition(new vscode.Position(sel[0].start.line, sel[0].start.character))
     const text = doc.getText(wordRange);
     return {
-        text: text,
-        range: wordRange,
         line: wordRange.start.line,
-        selection: selection
-    }
+        range: wordRange,
+        selection,
+        text,
+    };
 }
 
-export function getSelectionDetails(sel: vscode.Selection[], doc: vscode.TextDocument): SelectionDetails {
+export function getSelectionDetails(sel: vscode.Selection[], doc: vscode.TextDocument): ISelectionDetails {
     const selection = sel[0];
     const wordRange = new vscode.Range(selection.start, selection.end);
     const text = doc.getText(wordRange);
     return {
-        text: text,
-        range: wordRange,
         line: wordRange.start.line,
-        selection: selection
-    }
+        range: wordRange,
+        selection,
+        text,
+    };
 }
 
 export function getIndentation(doc: vscode.TextDocument, line: number): string {
@@ -55,7 +55,7 @@ export function wordIndexesInText(text: string, toFind: string): number[] {
     let lastWordIndex = -1;
     while (true) {
         lastWordIndex = text.indexOf(toFind, lastWordIndex + 1);
-        if (lastWordIndex == -1) {
+        if (lastWordIndex === -1) {
             break;
         }
         found.push(lastWordIndex);
@@ -63,7 +63,8 @@ export function wordIndexesInText(text: string, toFind: string): number[] {
     return found;
 }
 
-export function getWordInstancesBelow(doc: vscode.TextDocument, word: string, startingLine: number, indentationCharCount: number): vscode.Position[] {
+export function getWordInstancesBelow(doc: vscode.TextDocument, word: string,
+                                      startingLine: number, indentationCharCount: number): vscode.Position[] {
     const positions = [];
     for (let i = startingLine; i < doc.lineCount; i++) {
         const currentLine = doc.lineAt(i);
@@ -71,13 +72,14 @@ export function getWordInstancesBelow(doc: vscode.TextDocument, word: string, st
             break;
         }
         wordIndexesInText(currentLine.text, word)
-            .map(wordIndex => doc.getWordRangeAtPosition(new vscode.Position(i, wordIndex)))
-            .forEach(position => positions.push(position));
+            .map((wordIndex) => doc.getWordRangeAtPosition(new vscode.Position(i, wordIndex)))
+            .forEach((position) => positions.push(position));
     }
     return positions;
 }
 
-export function getBindingDeclarationAbove(doc: vscode.TextDocument, word: string, startingLine: number, indentationCharCount: number) {
+export function getBindingDeclarationAbove(doc: vscode.TextDocument, word: string,
+                                           startingLine: number, indentationCharCount: number) {
     let currentLine: vscode.TextLine;
     for (let i = startingLine; i >= 0; i--) {
         currentLine = doc.lineAt(i);
@@ -86,7 +88,7 @@ export function getBindingDeclarationAbove(doc: vscode.TextDocument, word: strin
         }
         return {
             matchedBindingLine: currentLine.text.match(bindingLineRegex),
-            matchedLine: currentLine
+            matchedLine: currentLine,
         };
     }
     return null;
