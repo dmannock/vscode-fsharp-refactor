@@ -1,9 +1,10 @@
 //TODO: 
+//checkout vscode extension testability -> tests!
+//refactor - simplify, extract, more fp
 //additional safeguards
 //add to ctrl + .?
 //find more suitable hotkeys
 //context aware - use lang service?
-//future checks? vscode.window.activeTextEditor.document.languageId
 //extension settings
 //features: 
 //  inline
