@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import * as assert from "assert";
 
-import * as vscode from 'vscode';
-import * as myExtension from '../extension';
+import * as vscode from "vscode";
+import * as myExtension from "../extension";
 
 suite("Extension Tests", () => {
-//TODO:
+// TODO:
 
 });

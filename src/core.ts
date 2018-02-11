@@ -22,7 +22,7 @@ export function isSelectionValid(selectionDetails: ISelectionDetails) {
 
 export function getExpandedSelection(sel: vscode.Selection[], doc: vscode.TextDocument): ISelectionDetails {
     const selection = sel[0];
-    const wordRange = doc.getWordRangeAtPosition(new vscode.Position(sel[0].start.line, sel[0].start.character))
+    const wordRange = doc.getWordRangeAtPosition(new vscode.Position(sel[0].start.line, sel[0].start.character));
     const text = doc.getText(wordRange);
     return {
         line: wordRange.start.line,
