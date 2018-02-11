@@ -2,11 +2,14 @@ import * as assert from "assert";
 import * as vscode from "vscode";
 import * as core from "../core";
 
-import * as fs from "fs";
-import * as os from "os";
-import * as path from "path";
-
-import { extractLet } from "../extension";
+import {
+    extractLet,
+    inlineLet
+} from "../extension";
+import {
+    getAllText,
+    preTestSetup
+} from "./utils";
 
 const extensionId = "danmannock.vscode-fsharp-refactor";
 
@@ -52,31 +55,25 @@ suite("Extension Tests", () => {
         assert.equal(actualText, expectedContent);
     });
 
-    const preTestSetup = async (fileContent: string) => {
-        const file = await createTestFile(fileContent);
-        const document = await vscode.workspace.openTextDocument(file);
-        await vscode.window.showTextDocument(document);
-        return vscode.window.activeTextEditor;
-    };
+    test("should inline let binding from declaration (example 2)", async () => {
+        const content = `let inlineTest arg1 =
+        let inlineMe = 1 + arg1
+        inlineMe * 2 / (3 - inlineMe)`;
 
-    const getAllText = async (document: vscode.TextDocument) => document.getText(new vscode.Range(
-        new vscode.Position(0, 0),
-        new vscode.Position(document.lineCount, Infinity))
-    );
+        const expectedContent = `let inlineTest arg1 =
+        1 + arg1 * 2 / (3 - 1 + arg1)`;
 
-    const createTestFile = async (content: string) => new Promise((resolve, reject) => {
-        const tmpFile = path.join(os.tmpdir(), randomName());
-        return fs.writeFile(
-            tmpFile,
-            content,
-            (err) => err
-                ? reject(err)
-                : resolve(vscode.Uri.file(tmpFile))
+        const editor = await preTestSetup(content);
+        // select '10 * arg1'
+        editor.selection = new vscode.Selection(
+            new vscode.Position(1, 12),
+            new vscode.Position(1, 12)
         );
+
+        await inlineLet(editor);
+
+        const actualText = await getAllText(editor.document);
+        assert.equal(actualText, expectedContent);
     });
 
-    const randomName = () => Math.random()
-        .toString(36)
-        .replace(/[^a-z]+/g, "")
-        .substr(0, 10);
 });
