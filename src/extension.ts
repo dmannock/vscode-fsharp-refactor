@@ -18,29 +18,21 @@ export function activate(context: vscode.ExtensionContext) {
     console.log("F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#F#");
     /* tslint:enable:no-console */
 
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand("extension.extractLet", (editor) => {
-        const { document, selections } = editor;
-        if (document.languageId !== "fsharp") {
-            return;
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand("fsharp-refactor.extractLet", 
+        async (editor) => {
+            const { document, selections } = editor;
+            if (document.languageId !== "fsharp") {
+                return;
+            }
+            if (selections.length > 1) {
+                return vscode.window.showWarningMessage("Multiple selection are not supported");
+            }
+            await extractLet(editor);
+            vscode.commands.executeCommand("editor.action.rename");
         }
-        if (selections.length > 1) {
-            return vscode.window.showWarningMessage("Multiple selection are not supported");
-        }
-        const selectionDetails = getSelectionDetails(selections, document);
-        if (!isSelectionValid(selectionDetails)) {
-            return;
-        }
-        const initialBindingName = "extracted";
-        const indentation = getIndentation(document, selectionDetails.line);
-        editor.edit((eb) => {
-            eb.replace(selectionDetails.selection, initialBindingName);
-            eb.insert(new vscode.Position(selectionDetails.line, 0),
-                `${indentation}let ${initialBindingName} = ${selectionDetails.text}\r\n`);
-        });
-        vscode.commands.executeCommand("editor.action.rename");
-    }));
+    ));
 
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand("extension.inlineLet", (editor) => {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand("fsharp-refactor.inlineLet", (editor) => {
         // TODO: refactor! (such nesting, many brackets, uggh!)
         const { document, selections } = editor;
         if (document.languageId !== "fsharp") {
@@ -94,4 +86,19 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
     }));
+}
+
+export async function extractLet(editor: vscode.TextEditor) {
+    const document = editor.document;
+    const selectionDetails = getSelectionDetails(editor.selections, document);
+    if (!isSelectionValid(selectionDetails)) {
+        return;
+    }
+    const initialBindingName = "extracted";
+    const indentation = getIndentation(document, selectionDetails.line);
+    return editor.edit((eb) => {
+        eb.replace(selectionDetails.selection, initialBindingName);
+        eb.insert(new vscode.Position(selectionDetails.line, 0),
+            `${indentation}let ${initialBindingName} = ${selectionDetails.text}\r\n`);
+    });
 }
