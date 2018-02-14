@@ -10,7 +10,7 @@ let inlineTest arg1 =
     let inlineMe = 1 + arg1
     inlineMe * 2 / (3 - inlineMe)
 
-//[] example 3 ////////////////////////////////////////
+//[*] example 3 ////////////////////////////////////////
 let anotherInlineTest arg1 =
         let inlineMe = 1 + arg1
         let dontInline = 12345
@@ -18,7 +18,7 @@ let anotherInlineTest arg1 =
 
 //some use case examples from https://github.com/ionide/ionide-vscode-fsharp/issues/172
 
-//[*] example 4 ////////////////////////////////////////
+//[] example 4 ////////////////////////////////////////
 let extractLet chars =
     let noSpaces = chars |> Array.filter ((<>) ' ')
     noSpaces

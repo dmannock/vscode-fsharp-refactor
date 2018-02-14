@@ -90,7 +90,7 @@ export function getBindingDeclarationAbove(doc: vscode.TextDocument, bindingName
         const matched = regEx.exec(currentLine.text);
         if (matched) {
             return {
-                matchedBindingLine: matched,
+                matchedLineRegexMatch: matched,
                 matchedLine: currentLine,
             };
         }
