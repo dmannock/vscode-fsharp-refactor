@@ -1,7 +1,8 @@
 "use strict";
 import * as vscode from "vscode";
 import {
-    bindingLineRegex,
+    createBindingLineRegex,
+    ISelectionDetails,
     getBindingDeclarationAbove,
     getExpandedSelection,
     getIndentation,
@@ -69,42 +70,47 @@ export async function inlineLet(editor: vscode.TextEditor) {
         return;
     }
     const currentLine = document.lineAt(selectionDetails.line);
-    const matchedBindingLine = currentLine.text.match(bindingLineRegex);
+    const matchedBindingLine = createBindingLineRegex().exec(currentLine.text);
     if (matchedBindingLine) {
-        const [, indentation, binding, bindingName, expression] = matchedBindingLine;
-        const occurancesToReplace = getWordInstancesBelow(
-            document,
-            bindingName,
-            selectionDetails.line + 1,
-            currentLine.firstNonWhitespaceCharacterIndex);
-
-        return editor.edit((eb) => {
-            eb.delete(currentLine.rangeIncludingLineBreak);
-            for (const range of occurancesToReplace) {
-                eb.replace(range, expression);
-            }
-        });
+        await inlineAllOccurances(matchedBindingLine, selectionDetails, currentLine, editor);
     } else {
         // naive initial concept
+        const selectedBindingName = selectionDetails.text;
         const matchedBindingLineAbove = getBindingDeclarationAbove(document,
-            selectionDetails.text,
-            selectionDetails.line - 1,
-            currentLine.firstNonWhitespaceCharacterIndex);
+            selectedBindingName,
+            selectionDetails.line,
+            currentLine.firstNonWhitespaceCharacterIndex
+        );
 
         if (matchedBindingLineAbove) {
-            const [, indentation, binding, bindingName, expression] = matchedBindingLineAbove.matchedBindingLine;
-            const occurancesToReplace = getWordInstancesBelow(document,
-                bindingName,
-                matchedBindingLineAbove.matchedLine.lineNumber + 1,
-                matchedBindingLineAbove.matchedLine.firstNonWhitespaceCharacterIndex);
-
-            return editor.edit((eb) => {
-                eb.delete(matchedBindingLineAbove.matchedLine.rangeIncludingLineBreak);
-                for (const range of occurancesToReplace) {
-                    // wrapped in brackets to ensure precidence is preserved (without knowing usage context)
-                    eb.replace(range, `(${expression})`);
-                }
-            });
+            // wrapped in brackets to ensure precidence is preserved (without knowing usage context)
+            await inlineAllOccurances(matchedBindingLineAbove.matchedBindingLine, 
+                selectionDetails, 
+                matchedBindingLineAbove.matchedLine, 
+                editor, 
+                (replace) => `(${replace})`
+            );
         }
     }
 }
+
+async function inlineAllOccurances(matchedBindingLine: RegExpExecArray, 
+                            selectionDetails: ISelectionDetails, 
+                            currentLine: vscode.TextLine, 
+                            editor: vscode.TextEditor, 
+                            replaceTransform: ((text: string) => string) = null
+) {
+    const document = editor.document;
+    const [, indentation, binding, bindingName, expression] = matchedBindingLine;
+    const occurancesToReplace = getWordInstancesBelow(document, bindingName, 
+        currentLine.lineNumber, 
+        currentLine.firstNonWhitespaceCharacterIndex
+    );
+    return editor.edit((eb) => {
+        eb.delete(currentLine.rangeIncludingLineBreak);
+        for (const range of occurancesToReplace) {
+            eb.replace(range, replaceTransform ? replaceTransform(expression) : expression);
+        }
+    });
+}
+
