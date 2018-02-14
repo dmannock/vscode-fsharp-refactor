@@ -144,5 +144,27 @@ suite("Extension Tests", () => {
         assert.equal(actualText, expectedContent);
     });
 
+    test("should extract parameterised function to let binding (example 5)", async () => {
+        const content = `let extractLambda o =
+        let res = (o |> Array.fold (fun acc n -> (n |> Array.toList) @ acc ) []).Head
+        res`;
+
+        const expectedContent = `let extractLambda o =
+        let extracted acc n = (n |> Array.toList) @ acc
+        let res = (o |> Array.fold extracted []).Head
+        res`;
+
+        const editor = await preTestSetup(content);
+        // select inlineMe binding on line 1
+        editor.selection = new vscode.Selection(
+            new vscode.Position(1, 35),
+            new vscode.Position(1, 76)
+        );
+
+        await extractLet(editor);
+
+        const actualText = await getAllText(editor.document);
+        assert.equal(actualText, expectedContent);
+    });
 
 });
