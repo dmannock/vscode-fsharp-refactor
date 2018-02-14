@@ -2,12 +2,12 @@
 import * as vscode from "vscode";
 import {
     createBindingLineRegex,
-    ISelectionDetails,
     getBindingDeclarationAbove,
     getExpandedSelection,
     getIndentation,
     getSelectionDetails,
     getWordInstancesBelow,
+    ISelectionDetails,
     isSelectionValid,
 } from "./core";
 
@@ -75,20 +75,27 @@ export async function inlineLet(editor: vscode.TextEditor) {
         await inlineAllOccurances(editor, currentLineRegexMatch, currentLine);
     } else {
         // naive initial concept
-        const bindingDeclaration = getBindingDeclarationAbove(document, selectionDetails.text, selectionDetails.line, currentLine.firstNonWhitespaceCharacterIndex);
+        const bindingDeclaration = getBindingDeclarationAbove(document, selectionDetails.text,
+            selectionDetails.line, currentLine.firstNonWhitespaceCharacterIndex);
         if (bindingDeclaration) {
             // wrapped in brackets to ensure precidence is preserved (without knowing usage context)
-            await inlineAllOccurances(editor, bindingDeclaration.matchedLineRegexMatch, bindingDeclaration.matchedLine, true);
+            await inlineAllOccurances(editor, bindingDeclaration.matchedLineRegexMatch,
+                bindingDeclaration.matchedLine, true);
         }
     }
 }
 
-async function inlineAllOccurances(editor: vscode.TextEditor, matchedBindingLine: RegExpExecArray, currentLine: vscode.TextLine, 
-                                wrapWithparentheses: boolean = false
+async function inlineAllOccurances(editor: vscode.TextEditor,
+                                   matchedBindingLine: RegExpExecArray,
+                                   currentLine: vscode.TextLine,
+                                   wrapWithparentheses: boolean = false
 ) {
     const document = editor.document;
     const [, indentation, binding, bindingName, expression] = matchedBindingLine;
-    const occurancesToReplace = getWordInstancesBelow(document, bindingName, currentLine.lineNumber, currentLine.firstNonWhitespaceCharacterIndex);
+    const occurancesToReplace = getWordInstancesBelow(document, bindingName,
+        currentLine.lineNumber,
+        currentLine.firstNonWhitespaceCharacterIndex
+    );
     return editor.edit((eb) => {
         eb.delete(currentLine.rangeIncludingLineBreak);
         for (const range of occurancesToReplace) {
@@ -96,4 +103,3 @@ async function inlineAllOccurances(editor: vscode.TextEditor, matchedBindingLine
         }
     });
 }
-
