@@ -18,7 +18,7 @@ let anotherInlineTest arg1 =
 
 //some use case examples from https://github.com/ionide/ionide-vscode-fsharp/issues/172
 
-//[] example 4 ////////////////////////////////////////
+//[*] example 4 ////////////////////////////////////////
 let extractLet chars =
     let noSpaces = chars |> Array.filter ((<>) ' ')
     noSpaces
