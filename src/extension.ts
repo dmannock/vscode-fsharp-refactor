@@ -70,46 +70,29 @@ export async function inlineLet(editor: vscode.TextEditor) {
         return;
     }
     const currentLine = document.lineAt(selectionDetails.line);
-    const matchedBindingLine = createBindingLineRegex().exec(currentLine.text);
-    if (matchedBindingLine) {
-        await inlineAllOccurances(matchedBindingLine, selectionDetails, currentLine, editor);
+    const currentLineRegexMatch = createBindingLineRegex().exec(currentLine.text);
+    if (currentLineRegexMatch) {
+        await inlineAllOccurances(editor, currentLineRegexMatch, currentLine);
     } else {
         // naive initial concept
-        const selectedBindingName = selectionDetails.text;
-        const matchedBindingLineAbove = getBindingDeclarationAbove(document,
-            selectedBindingName,
-            selectionDetails.line,
-            currentLine.firstNonWhitespaceCharacterIndex
-        );
-
-        if (matchedBindingLineAbove) {
+        const bindingDeclaration = getBindingDeclarationAbove(document, selectionDetails.text, selectionDetails.line, currentLine.firstNonWhitespaceCharacterIndex);
+        if (bindingDeclaration) {
             // wrapped in brackets to ensure precidence is preserved (without knowing usage context)
-            await inlineAllOccurances(matchedBindingLineAbove.matchedBindingLine, 
-                selectionDetails, 
-                matchedBindingLineAbove.matchedLine, 
-                editor, 
-                (replace) => `(${replace})`
-            );
+            await inlineAllOccurances(editor, bindingDeclaration.matchedLineRegexMatch, bindingDeclaration.matchedLine, true);
         }
     }
 }
 
-async function inlineAllOccurances(matchedBindingLine: RegExpExecArray, 
-                            selectionDetails: ISelectionDetails, 
-                            currentLine: vscode.TextLine, 
-                            editor: vscode.TextEditor, 
-                            replaceTransform: ((text: string) => string) = null
+async function inlineAllOccurances(editor: vscode.TextEditor, matchedBindingLine: RegExpExecArray, currentLine: vscode.TextLine, 
+                                wrapWithparentheses: boolean = false
 ) {
     const document = editor.document;
     const [, indentation, binding, bindingName, expression] = matchedBindingLine;
-    const occurancesToReplace = getWordInstancesBelow(document, bindingName, 
-        currentLine.lineNumber, 
-        currentLine.firstNonWhitespaceCharacterIndex
-    );
+    const occurancesToReplace = getWordInstancesBelow(document, bindingName, currentLine.lineNumber, currentLine.firstNonWhitespaceCharacterIndex);
     return editor.edit((eb) => {
         eb.delete(currentLine.rangeIncludingLineBreak);
         for (const range of occurancesToReplace) {
-            eb.replace(range, replaceTransform ? replaceTransform(expression) : expression);
+            eb.replace(range, wrapWithparentheses ? `(${expression})` : expression);
         }
     });
 }
