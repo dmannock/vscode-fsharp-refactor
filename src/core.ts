@@ -4,6 +4,42 @@ import * as vscode from "vscode";
 export const createBindingLineRegex = (bindingName = "\\S+") =>
     new RegExp(`^(\\s+)(let)\\s+(${bindingName})\\s+=\\s+([\\s\\S]+)`);
 
+const lambdaRegexPattern = `\\(fun([^-]+)->(.+)\\)`;
+
+export function isLambdaSelection(text: string) {
+    return new RegExp(lambdaRegexPattern).test(text);
+}
+
+export function lambdaBindingFromSelection(text: string)  {
+    const [, rawArgs, rawBody] = new RegExp(lambdaRegexPattern).exec(text);
+    const args = rawArgs.split(" ").filter((x) => x);
+    return {
+        args,
+        body: ensureParenthesesWrapping(rawBody).trim(),
+    };
+}
+
+function lambdaToBinding(obj) {
+    return `let extracted ${obj.args.join(" ")} = ${obj.body}\r\n`;
+}
+
+function ensureParenthesesWrapping(text) {
+    const bracketsCount = text
+        .split("")
+        .reduce((acc, cur) =>
+            cur === "("
+            ? Object.assign(acc, { open: acc.open + 1 })
+            : cur === ")"
+            ? Object.assign(acc, { close: acc.close + 1 })
+            : acc,
+        { open: 0, close: 0});
+    return bracketsCount.open > bracketsCount.close
+        ? text + ")"
+        : bracketsCount.open < bracketsCount.close
+        ? "(" + text
+        : text;
+}
+
 export interface ISelectionDetails {
     line: number;
     range: vscode.Range;

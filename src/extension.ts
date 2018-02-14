@@ -8,7 +8,9 @@ import {
     getSelectionDetails,
     getWordInstancesBelow,
     ISelectionDetails,
+    isLambdaSelection,
     isSelectionValid,
+    lambdaBindingFromSelection,
 } from "./core";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -55,10 +57,16 @@ export async function extractLet(editor: vscode.TextEditor) {
     }
     const initialBindingName = "extracted";
     const indentation = getIndentation(document, selectionDetails.line);
+    let extractedBinding;
+    if (isLambdaSelection(selectionDetails.text)) {
+        const obj = lambdaBindingFromSelection(selectionDetails.text);
+        extractedBinding =  `${indentation}let ${initialBindingName} ${obj.args.join(" ")} = ${obj.body}\r\n`;
+    } else {
+        extractedBinding = `${indentation}let ${initialBindingName} = ${selectionDetails.text}\r\n`;
+    }
     return editor.edit((eb) => {
         eb.replace(selectionDetails.selection, initialBindingName);
-        eb.insert(new vscode.Position(selectionDetails.line, 0),
-            `${indentation}let ${initialBindingName} = ${selectionDetails.text}\r\n`);
+        eb.insert(new vscode.Position(selectionDetails.line, 0), extractedBinding);
     });
 }
 
