@@ -1,7 +1,8 @@
 "use strict";
 import * as vscode from "vscode";
 
-export const bindingLineRegex = /^(\s+)(let)\s+(\S+)\s+=\s+([\s\S]+)/;
+export const createBindingLineRegex = (bindingName = "\\S+") => 
+    new RegExp(`^(\\s+)(let)\\s+(${bindingName})\\s+=\\s+([\\s\\S]+)`);
 
 export interface ISelectionDetails {
     line: number;
@@ -46,7 +47,6 @@ export function getSelectionDetails(sel: vscode.Selection[], doc: vscode.TextDoc
 
 export function getIndentation(doc: vscode.TextDocument, line: number): string {
     const matched = doc.lineAt(line).text.match(/^\s+/);
-
     return matched ? matched[0] : "";
 }
 
@@ -66,7 +66,7 @@ export function wordIndexesInText(text: string, toFind: string): number[] {
 export function getWordInstancesBelow(doc: vscode.TextDocument, word: string,
                                       startingLine: number, indentationCharCount: number): vscode.Position[] {
     const positions = [];
-    for (let i = startingLine; i < doc.lineCount; i++) {
+    for (let i = startingLine + 1; i < doc.lineCount; i++) {
         const currentLine = doc.lineAt(i);
         if (currentLine.firstNonWhitespaceCharacterIndex < indentationCharCount) {
             break;
@@ -78,18 +78,22 @@ export function getWordInstancesBelow(doc: vscode.TextDocument, word: string,
     return positions;
 }
 
-export function getBindingDeclarationAbove(doc: vscode.TextDocument, word: string,
+export function getBindingDeclarationAbove(doc: vscode.TextDocument, bindingName: string,
                                            startingLine: number, indentationCharCount: number) {
     let currentLine: vscode.TextLine;
-    for (let i = startingLine; i >= 0; i--) {
+    const regEx = createBindingLineRegex(bindingName);
+    for (let i = startingLine - 1; i >= 0; i--) {
         currentLine = doc.lineAt(i);
         if (currentLine.firstNonWhitespaceCharacterIndex > currentLine.firstNonWhitespaceCharacterIndex) {
             break;
         }
-        return {
-            matchedBindingLine: currentLine.text.match(bindingLineRegex),
-            matchedLine: currentLine,
-        };
+        const matched = regEx.exec(currentLine.text);
+        if (matched) {
+            return {
+                matchedBindingLine: matched,
+                matchedLine: currentLine,
+            };
+        }
     }
     return null;
 }
