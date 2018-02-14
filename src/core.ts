@@ -1,7 +1,7 @@
 "use strict";
 import * as vscode from "vscode";
 
-export const createBindingLineRegex = (bindingName = "\\S+") => 
+export const createBindingLineRegex = (bindingName = "\\S+") =>
     new RegExp(`^(\\s+)(let)\\s+(${bindingName})\\s+=\\s+([\\s\\S]+)`);
 
 export interface ISelectionDetails {
@@ -90,8 +90,8 @@ export function getBindingDeclarationAbove(doc: vscode.TextDocument, bindingName
         const matched = regEx.exec(currentLine.text);
         if (matched) {
             return {
-                matchedLineRegexMatch: matched,
                 matchedLine: currentLine,
+                matchedLineRegexMatch: matched,
             };
         }
     }

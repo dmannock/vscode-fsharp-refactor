@@ -76,29 +76,28 @@ suite("Extension Tests", () => {
         assert.equal(actualText, expectedContent);
     });
 
-    
     test("should inline let binding from usage (still example 2)", async () => {
         const content = `let inlineTest arg1 =
         let inlineMe = 1 + arg1
         inlineMe * 2 / (3 - inlineMe)`;
-        
+
         // note the brackets
         const expectedContent = `let inlineTest arg1 =
         (1 + arg1) * 2 / (3 - (1 + arg1))`;
-        
+
         const editor = await preTestSetup(content);
         // select last inlineMe on line 2
         editor.selection = new vscode.Selection(
             new vscode.Position(2, 30),
             new vscode.Position(2, 30)
         );
-        
+
         await inlineLet(editor);
-        
+
         const actualText = await getAllText(editor.document);
         assert.equal(actualText, expectedContent);
     });
-    
+
     test("should inline let binding from usage with binding at beginning of context (example 3)", async () => {
         const content = `let inlineTest arg1 =
         let inlineMe = 1 + arg1
