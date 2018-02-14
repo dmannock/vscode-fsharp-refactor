@@ -120,4 +120,29 @@ suite("Extension Tests", () => {
         const actualText = await getAllText(editor.document);
         assert.equal(actualText, expectedContent);
     });
+
+    test("should extract unary function to let binding (example 4)", async () => {
+        const content = `let extractLet chars =
+        let noSpaces = chars |> Array.filter ((<>) ' ')
+        noSpaces`;
+
+        const expectedContent = `let extractLet chars =
+        let extracted = ((<>) ' ')
+        let noSpaces = chars |> Array.filter extracted
+        noSpaces`;
+
+        const editor = await preTestSetup(content);
+        // select i((<>) ' ') on line 1
+        editor.selection = new vscode.Selection(
+            new vscode.Position(1, 45),
+            new vscode.Position(1, 55)
+        );
+
+        await extractLet(editor);
+
+        const actualText = await getAllText(editor.document);
+        assert.equal(actualText, expectedContent);
+    });
+
+
 });
