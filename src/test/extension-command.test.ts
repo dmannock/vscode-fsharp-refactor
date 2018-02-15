@@ -12,6 +12,7 @@ import {
 suite("Extension Command Tests", () => {
 
     // add comparison tests to array
+    /* tslint:disable:object-literal-sort-keys */
     [{
         description: "should extract let binding (example 1)",
         content: `let test arg1 =
