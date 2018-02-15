@@ -1,7 +1,3 @@
-import * as assert from "assert";
-import * as vscode from "vscode";
-import * as core from "../core";
-
 import {
     extractLet,
     inlineLet
@@ -13,25 +9,8 @@ import {
     runComparisonTest,
 } from "./utils";
 
-const extensionId = "danmannock.vscode-fsharp-refactor";
+suite("Extension Command Tests", () => {
 
-suite("Extension Tests", () => {
-
-    test("should have loaded extension", () => {
-        assert.ok(vscode.extensions.getExtension(extensionId));
-    });
-
-    test("should have activated extension", (done) => {
-        const extension = vscode.extensions.getExtension(extensionId);
-        if (!extension.isActive) {
-            extension.activate().then(
-                () => done(),
-                () => done("Activation failed."));
-            return;
-        }
-        done();
-    });
-    
     // add comparison tests to array
     [{
         description: "should extract let binding (example 1)",

@@ -1,3 +1,4 @@
+import * as assert from "assert";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
@@ -9,6 +10,20 @@ export const preTestSetup = async (fileContent: string) => {
     await vscode.window.showTextDocument(document);
     return vscode.window.activeTextEditor;
 };
+
+export function createSelection(startLine, startPos, endLine, endPos) {
+    return new vscode.Selection(new vscode.Position(startLine, startPos), new vscode.Position(endLine, endPos));
+}
+
+export function runComparisonTest({ description, content, expectedContent, selection, action}) {
+    test(description, async () => {
+        const editor = await preTestSetup(content);
+        editor.selection = selection;
+        await action(editor);
+        const actualText = await getAllText(editor.document);
+        assert.equal(actualText, expectedContent);
+    });
+}
 
 export const getAllText = async (document: vscode.TextDocument) => document.getText(new vscode.Range(
     new vscode.Position(0, 0),

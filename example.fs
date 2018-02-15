@@ -23,7 +23,7 @@ let extractLet chars =
     let noSpaces = chars |> Array.filter ((<>) ' ')
     noSpaces
 
-//[ ] example 5 ////////////////////////////////////////
+//[*] example 5 ////////////////////////////////////////
 let extractLambda o =
     let res = (o |> Array.fold (fun acc n -> (n |> Array.toList) @ acc ) []).Head
     res
@@ -33,6 +33,13 @@ let extractLambda o =
 // let res = (o |> Array.fold collectSignatures []).Head
 
 //[ ] example 6 ////////////////////////////////////////
+let stringToExtract = "/usr/bin/bash"
+
+//should refactor to:
+// let prefix = "/usr/bin/"
+// let stringToExtract = prefix + "bash"
+
+//[ ] example 7 ////////////////////////////////////////
 let bashPath = "/usr/bin/bash"
 let zshPath = "/usr/bin/zsh"
 
