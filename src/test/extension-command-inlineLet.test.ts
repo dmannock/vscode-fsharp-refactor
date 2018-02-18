@@ -1,4 +1,4 @@
-import { inlineLet } from "../extension";
+import { inlineLet } from "../extension-commands";
 import {
     createSelection,
     runComparisonTest,

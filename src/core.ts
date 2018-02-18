@@ -67,10 +67,12 @@ function ensureParenthesesWrapping(text) {
 
 export function isSelectionValid(selectionDetails: ISelectionDetails) {
     if (!selectionDetails.range.isSingleLine) {
-        return vscode.window.showWarningMessage("Multiple line selections are not supported");
+        vscode.window.showWarningMessage("Multiple line selections are not supported");
+        return false;
     }
     if (selectionDetails.range.isEmpty) {
-        return vscode.window.showInformationMessage("Select the expression to extract");
+        vscode.window.showInformationMessage("Select the expression to extract");
+        return false;
     }
     return true;
 }

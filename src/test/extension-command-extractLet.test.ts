@@ -1,4 +1,4 @@
-import { extractLet } from "../extension";
+import { extractLet } from "../extension-commands";
 import {
     createSelection,
     runComparisonTest,

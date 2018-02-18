@@ -1,12 +1,11 @@
 //TODO: 
-//checkout vscode extension testability -> tests!
 //refactor - simplify, extract, more fp
 //additional safeguards
 //add to ctrl + .?
 //find more suitable hotkeys
 //context aware - use lang service?
 //extension settings
-//features: 
+//features (from actual use cases): 
 //  inline
 //  args
 //  extract funcs
