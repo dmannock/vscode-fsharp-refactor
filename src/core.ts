@@ -1,10 +1,35 @@
 "use strict";
 import * as vscode from "vscode";
 
-export const createBindingLineRegex = (bindingName = "\\S+") =>
-    new RegExp(`^(\\s+)(let)\\s+(${bindingName})\\s+=\\s+([\\s\\S]+)`);
-
 const lambdaRegexPattern = `\\(fun([^-]+)->(.+)\\)`;
+
+export interface IMatchedBindingLine {
+    indentation: string;
+    binding: string;
+    bindingName: string;
+    expression: string;
+}
+
+export interface ISelectionDetails {
+    line: number;
+    range: vscode.Range;
+    selection: vscode.Selection;
+    text: string;
+}
+
+export const matchBindingLine = (bindingNameToMatch = "\\S+") => (text) => {
+    const matched = new RegExp(`^(\\s+)(let)\\s+(${bindingNameToMatch})\\s+=\\s+([\\s\\S]+)`).exec(text);
+    if (!matched) {
+        return null;
+    }
+    const [, indentation, binding, bindingName, expression] = matched;
+    return {
+        binding,
+        bindingName,
+        expression,
+        indentation,
+    };
+};
 
 export function isLambdaSelection(text: string) {
     return new RegExp(lambdaRegexPattern).test(text);
@@ -38,13 +63,6 @@ function ensureParenthesesWrapping(text) {
         : bracketsCount.open < bracketsCount.close
         ? "(" + text
         : text;
-}
-
-export interface ISelectionDetails {
-    line: number;
-    range: vscode.Range;
-    selection: vscode.Selection;
-    text: string;
 }
 
 export function isSelectionValid(selectionDetails: ISelectionDetails) {
@@ -117,13 +135,13 @@ export function getWordInstancesBelow(doc: vscode.TextDocument, word: string,
 export function getBindingDeclarationAbove(doc: vscode.TextDocument, bindingName: string,
                                            startingLine: number, indentationCharCount: number) {
     let currentLine: vscode.TextLine;
-    const regEx = createBindingLineRegex(bindingName);
+    const matchBindlineLineForName = matchBindingLine(bindingName);
     for (let i = startingLine - 1; i >= 0; i--) {
         currentLine = doc.lineAt(i);
         if (currentLine.firstNonWhitespaceCharacterIndex > currentLine.firstNonWhitespaceCharacterIndex) {
             break;
         }
-        const matched = regEx.exec(currentLine.text);
+        const matched = matchBindlineLineForName(currentLine.text);
         if (matched) {
             return {
                 matchedLine: currentLine,

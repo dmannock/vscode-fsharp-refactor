@@ -1,16 +1,17 @@
 "use strict";
 import * as vscode from "vscode";
 import {
-    createBindingLineRegex,
     getBindingDeclarationAbove,
     getExpandedSelection,
     getIndentation,
     getSelectionDetails,
     getWordInstancesBelow,
+    IMatchedBindingLine,
     ISelectionDetails,
     isLambdaSelection,
     isSelectionValid,
     lambdaBindingFromSelection,
+    matchBindingLine,
 } from "./core";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -24,9 +25,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerTextEditorCommand("fsharp-refactor.extractLet",
         async (editor) => {
             const { document, selections } = editor;
-            if (document.languageId !== "fsharp") {
-                return;
-            }
             if (selections.length > 1) {
                 return vscode.window.showWarningMessage("Multiple selection are not supported");
             }
@@ -38,9 +36,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerTextEditorCommand("fsharp-refactor.inlineLet",
         async (editor) => {
             const { document, selections } = editor;
-            if (document.languageId !== "fsharp") {
-                return;
-            }
             if (selections.length > 1) {
                 return vscode.window.showWarningMessage("Multiple selection are not supported");
             }
@@ -59,8 +54,8 @@ export async function extractLet(editor: vscode.TextEditor) {
     const indentation = getIndentation(document, selectionDetails.line);
     let extractedBinding;
     if (isLambdaSelection(selectionDetails.text)) {
-        const obj = lambdaBindingFromSelection(selectionDetails.text);
-        extractedBinding =  `${indentation}let ${initialBindingName} ${obj.args.join(" ")} = ${obj.body}\r\n`;
+        const { args, body } = lambdaBindingFromSelection(selectionDetails.text);
+        extractedBinding =  `${indentation}let ${initialBindingName} ${args.join(" ")} = ${body}\r\n`;
     } else {
         extractedBinding = `${indentation}let ${initialBindingName} = ${selectionDetails.text}\r\n`;
     }
@@ -70,7 +65,6 @@ export async function extractLet(editor: vscode.TextEditor) {
     });
 }
 
-// TODO: refactor after tests! (such nesting, many brackets, uggh!)
 export async function inlineLet(editor: vscode.TextEditor) {
     const document = editor.document;
     const selectionDetails = getExpandedSelection(editor.selections, document);
@@ -78,11 +72,10 @@ export async function inlineLet(editor: vscode.TextEditor) {
         return;
     }
     const currentLine = document.lineAt(selectionDetails.line);
-    const currentLineRegexMatch = createBindingLineRegex().exec(currentLine.text);
+    const currentLineRegexMatch = matchBindingLine()(currentLine.text);
     if (currentLineRegexMatch) {
         await inlineAllOccurances(editor, currentLineRegexMatch, currentLine);
     } else {
-        // naive initial concept
         const bindingDeclaration = getBindingDeclarationAbove(document, selectionDetails.text,
             selectionDetails.line, currentLine.firstNonWhitespaceCharacterIndex);
         if (bindingDeclaration) {
@@ -94,16 +87,15 @@ export async function inlineLet(editor: vscode.TextEditor) {
 }
 
 async function inlineAllOccurances(editor: vscode.TextEditor,
-                                   matchedBindingLine: RegExpExecArray,
+                                   matchedBindingLine: IMatchedBindingLine,
                                    currentLine: vscode.TextLine,
                                    wrapWithparentheses: boolean = false
 ) {
     const document = editor.document;
-    const [, indentation, binding, bindingName, expression] = matchedBindingLine;
+    const { bindingName, expression } = matchedBindingLine;
     const occurancesToReplace = getWordInstancesBelow(document, bindingName,
-        currentLine.lineNumber,
-        currentLine.firstNonWhitespaceCharacterIndex
-    );
+        currentLine.lineNumber, currentLine.firstNonWhitespaceCharacterIndex);
+
     return editor.edit((eb) => {
         eb.delete(currentLine.rangeIncludingLineBreak);
         for (const range of occurancesToReplace) {

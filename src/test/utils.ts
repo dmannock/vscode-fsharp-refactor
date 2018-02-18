@@ -25,7 +25,7 @@ export function runComparisonTest({ description, content, expectedContent, selec
     });
 }
 
-export const getAllText = async (document: vscode.TextDocument) => document.getText(new vscode.Range(
+const getAllText = async (document: vscode.TextDocument) => document.getText(new vscode.Range(
     new vscode.Position(0, 0),
     new vscode.Position(document.lineCount, Infinity))
 );

@@ -1,17 +1,5 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
-import * as core from "../core";
-
-import {
-    extractLet,
-    inlineLet
-} from "../extension";
-import {
-    createSelection,
-    getAllText,
-    preTestSetup,
-    runComparisonTest,
-} from "./utils";
 
 const extensionId = "danmannock.vscode-fsharp-refactor";
 

@@ -48,13 +48,13 @@
                 "command": "fsharp-refactor.extractLet",
                 "key": "Ctrl+Shift+R",
                 "mac": "cmd+Shift+R",
-                "when": "editorHasSelection"
+                "when": "editorHasSelection && editorLangId == 'fsharp'"
             },
             {
                 "command": "fsharp-refactor.inlineLet",
                 "key": "Ctrl+Shift+I",
                 "mac": "cmd+Shift+R",
-                "when": "editorTextFocus"
+                "when": "editorTextFocus && editorLangId == 'fsharp'"
             }
         ]
     },
