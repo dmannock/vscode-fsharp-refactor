@@ -17,7 +17,7 @@ export interface ISelectionDetails {
     text: string;
 }
 
-export const matchBindingLine = (bindingNameToMatch = "\\S+") => (text) => {
+export const matchBindingLine = (bindingNameToMatch = "\\S+") => (text): IMatchedBindingLine => {
     const matched = new RegExp(`^(\\s+)(let)\\s+(${bindingNameToMatch})\\s+=\\s+([\\s\\S]+)`).exec(text);
     if (!matched) {
         return null;

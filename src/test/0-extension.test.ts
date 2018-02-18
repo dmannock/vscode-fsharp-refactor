@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 
 const extensionId = "danmannock.vscode-fsharp-refactor";
 
+// file prefix to run these first
 suite("Extension Tests", () => {
 
     test("should have loaded extension", () => {

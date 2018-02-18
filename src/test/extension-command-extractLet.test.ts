@@ -4,7 +4,7 @@ import {
     runComparisonTest,
 } from "./utils";
 
-suite("Extension Command Tests", () => {
+suite("Extension 'extractLet' Command Tests", () => {
 
     // add comparison tests to array
     /* tslint:disable:object-literal-sort-keys */

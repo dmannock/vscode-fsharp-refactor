@@ -6,10 +6,9 @@ import {
 } from "./extension-commands";
 
 export function activate(context: vscode.ExtensionContext) {
-    registerWithAutoDisposal("fsharp-refactor.extractLet", async (editor) => {
-            await extractLet(editor);
-            vscode.commands.executeCommand("editor.action.rename");
-        }
+    registerWithAutoDisposal("fsharp-refactor.extractLet", (editor) =>
+        extractLet(editor)
+        .then(() => vscode.commands.executeCommand("editor.action.rename"))
     );
 
     registerWithAutoDisposal("fsharp-refactor.inlineLet", inlineLet);

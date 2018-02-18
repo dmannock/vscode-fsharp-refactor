@@ -15,12 +15,19 @@ export function createSelection(startLine, startPos, endLine, endPos) {
     return new vscode.Selection(new vscode.Position(startLine, startPos), new vscode.Position(endLine, endPos));
 }
 
-export function runComparisonTest({ description, content, expectedContent, selection, action}) {
+export function runComparisonTest({
+    description,
+    content,
+    expectedContent,
+    selection,
+    action,
+}) {
     test(description, async () => {
         const editor = await preTestSetup(content);
         editor.selection = selection;
-        await action(editor);
+        const actionResult = await action(editor);
         const actualText = await getAllText(editor.document);
+        assert.ok(actionResult);
         assert.equal(actualText, expectedContent);
     });
 }
