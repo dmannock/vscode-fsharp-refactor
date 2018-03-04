@@ -1,18 +1,21 @@
 "use strict";
 import * as vscode from "vscode";
 import {
+    IMatchedBindingLine,
+    isLambdaSelection,
+    lambdaBindingFromSelection,
+    matchBindingLine,
+} from "./general-funcs";
+
+import {
     getBindingDeclarationAbove,
     getExpandedSelection,
     getIndentation,
     getSelectionDetails,
     getWordInstancesBelow,
-    IMatchedBindingLine,
     ISelectionDetails,
-    isLambdaSelection,
     isSelectionValid,
-    lambdaBindingFromSelection,
-    matchBindingLine,
-} from "./core";
+} from "./vscode-funcs";
 
 const initialBindingName = "extracted";
 
@@ -53,35 +56,35 @@ export async function inlineLet(editor: vscode.TextEditor): Promise<boolean> {
     const currentLine = document.lineAt(selectionDetails.line);
     const currentLineRegexMatch = matchBindingLine()(currentLine.text);
     if (currentLineRegexMatch) {
-        return await inlineAllOccurances(editor, currentLineRegexMatch, currentLine);
+        return await inlineAllOccurrences(editor, currentLineRegexMatch, currentLine);
     } else {
         const bindingDeclaration = getBindingDeclarationAbove(document, selectionDetails.text,
             selectionDetails.line, currentLine.firstNonWhitespaceCharacterIndex);
         if (bindingDeclaration) {
-            // wrapped in brackets to ensure precidence is preserved (without knowing usage context)
-            return await inlineAllOccurances(editor, bindingDeclaration.matchedLineRegexMatch,
+            // wrapped in brackets to ensure precedence is preserved (without knowing usage context)
+            return await inlineAllOccurrences(editor, bindingDeclaration.matchedLineRegexMatch,
                 bindingDeclaration.matchedLine, true);
         }
     }
 }
 
-async function inlineAllOccurances(editor: vscode.TextEditor,
-                                   matchedBindingLine: IMatchedBindingLine,
-                                   currentLine: vscode.TextLine,
-                                   wrapWithparentheses: boolean = false
+async function inlineAllOccurrences(editor: vscode.TextEditor,
+                                    matchedBindingLine: IMatchedBindingLine,
+                                    currentLine: vscode.TextLine,
+                                    wrapWithParentheses: boolean = false
 ): Promise<boolean> {
     const document = editor.document;
     const { bindingName, expression } = matchedBindingLine;
-    const occurancesToReplace = getWordInstancesBelow(document, bindingName,
+    const occurrencesToReplace = getWordInstancesBelow(document, bindingName,
         currentLine.lineNumber, currentLine.firstNonWhitespaceCharacterIndex);
-    if (occurancesToReplace.length === 0) {
-        vscode.window.showWarningMessage("No occurances were found to replace.");
+    if (occurrencesToReplace.length === 0) {
+        vscode.window.showWarningMessage("No occurrences were found to replace.");
         return false;
     }
     return editor.edit((eb) => {
         eb.delete(currentLine.rangeIncludingLineBreak);
-        for (const range of occurancesToReplace) {
-            eb.replace(range, wrapWithparentheses ? `(${expression})` : expression);
+        for (const range of occurrencesToReplace) {
+            eb.replace(range, wrapWithParentheses ? `(${expression})` : expression);
         }
     });
 }
