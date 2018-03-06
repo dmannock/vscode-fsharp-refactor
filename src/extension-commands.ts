@@ -1,8 +1,10 @@
 "use strict";
 import * as vscode from "vscode";
 import {
+    getExtractedString,
     IMatchedBindingLine,
     isLambdaSelection,
+    isStringSelection,
     lambdaBindingFromSelection,
     matchBindingLine,
 } from "./general-funcs";
@@ -30,10 +32,22 @@ export async function extractLet(editor: vscode.TextEditor): Promise<boolean> {
         return false;
     }
     const indentation = getIndentation(document, selectionDetails.line);
+    const textLine = document.lineAt(selectionDetails.line).text;
     let extractedBinding;
     if (isLambdaSelection(selectionDetails.text)) {
         const { args, body } = lambdaBindingFromSelection(selectionDetails.text);
         extractedBinding =  `${indentation}let ${initialBindingName} ${args.join(" ")} = ${body}\r\n`;
+    } else if (isStringSelection(selectionDetails.text, textLine)) {
+        const { start, end } = selectionDetails.selection;
+        const { extractedText, newLine } = getExtractedString(textLine, start.character, end.character);
+        extractedBinding = `${indentation}let ${initialBindingName} = ${extractedText}\r\n`;
+        return editor.edit((eb) => {
+            eb.replace(new vscode.Range(
+                new vscode.Position(selectionDetails.line, 0),
+                new vscode.Position(selectionDetails.line, textLine.length)
+            ), newLine);
+            eb.insert(new vscode.Position(selectionDetails.line, 0), extractedBinding);
+        });
     } else {
         extractedBinding = `${indentation}let ${initialBindingName} = ${selectionDetails.text}\r\n`;
     }

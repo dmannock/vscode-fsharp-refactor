@@ -1,6 +1,12 @@
 "use strict";
 
 const lambdaRegexPattern = `\\(fun([^-]+)->(.+)\\)`;
+const createStringRegexPattern =
+    (selectedText) => `${selectedText.startsWith(`"`)
+        ? ""
+        : `\\"`}(.*)${selectedText}(.*)${selectedText.endsWith(`"`)
+        ? ""
+        : `\\"`}`;
 
 export interface IMatchedBindingLine {
     indentation: string;
@@ -26,8 +32,12 @@ export function ensureParenthesesWrapping(text) {
         : text;
 }
 
-export function isLambdaSelection(text: string) {
-    return new RegExp(lambdaRegexPattern).test(text);
+export function isLambdaSelection(selectedText: string) {
+    return new RegExp(lambdaRegexPattern).test(selectedText);
+}
+
+export function isStringSelection(selectedText: string, wholeLine: string) {
+    return new RegExp(createStringRegexPattern(selectedText)).test(wholeLine);
 }
 
 export function lambdaBindingFromSelection(text: string)  {
@@ -64,4 +74,30 @@ export function wordIndexesInText(text: string, toFind: string): number[] {
         found.push(lastWordIndex);
     }
     return found;
+}
+
+export function getExtractedString(textLine: string, selectionStartPos: number, selectionEndPos: number) {
+    const initialBindingName = "extracted";
+    const quoteChars = `"`;
+    const selectedText = textLine.substring(selectionStartPos, selectionEndPos);
+
+    const isStartSelected = selectedText[0] === quoteChars;
+    const isEndSelected = selectedText[selectedText.length - 1] === quoteChars;
+
+    const textBeforeSelection = textLine.substring(0, selectionStartPos);
+    const mid = textLine.substring(selectionStartPos, selectionStartPos);
+    const textAfterSelection = textLine.substring(selectionEndPos, Infinity);
+
+    const extractedText = `${!isStartSelected ? `"` : ""}${selectedText}${!isEndSelected ? `"` : ""}`;
+    const newLine = `${textBeforeSelection}`
+        + `${isStartSelected && !isEndSelected
+            ? `${initialBindingName} + ${quoteChars}${textAfterSelection}` : ""}`
+        + `${isEndSelected && !isStartSelected
+            ? `${mid}${quoteChars} + ${initialBindingName}` : ""}`
+        + `${!isStartSelected && !isEndSelected
+            ? `${quoteChars} + ${initialBindingName} + "${textAfterSelection}` : "" }`;
+    return {
+        extractedText,
+        newLine,
+    };
 }

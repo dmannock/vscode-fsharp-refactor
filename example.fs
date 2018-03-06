@@ -32,14 +32,14 @@ let extractLambda o =
 //     (n |> Array.toList) @ acc 
 // let res = (o |> Array.fold collectSignatures []).Head
 
-//[ ] example 6 ////////////////////////////////////////
+//[x] example 6 ////////////////////////////////////////
 let stringToExtract = "/usr/bin/bash"
 
 //should refactor to:
 // let prefix = "/usr/bin/"
 // let stringToExtract = prefix + "bash"
 
-//[ ] example 7 ////////////////////////////////////////
+//[] example 7 ////////////////////////////////////////
 let bashPath = "/usr/bin/bash"
 let zshPath = "/usr/bin/zsh"
 
