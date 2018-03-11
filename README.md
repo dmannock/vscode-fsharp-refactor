@@ -8,10 +8,14 @@ Extract expression to let binding
 1. Select the expression to extract
 2. Use command (ctrl+shift+R)
 
-* Extracts lambdas 
+#### Extracts expressions
+
+![4-example-extractLet_expression](https://raw.githubusercontent.com/dmannock/vscode-fsharp-refactor/master/docs/4-example-extractLet_expression.gif)
+
+#### Extracts lambdas
 ![5-example-extractLet_lambda](https://raw.githubusercontent.com/dmannock/vscode-fsharp-refactor/master/docs/5-example-extractLet_lambda.gif)
 
-* Extracts strings 
+#### Extracts strings
 ![6-example-extractLet_string](https://raw.githubusercontent.com/dmannock/vscode-fsharp-refactor/master/docs/6-example-extractLet_string.gif)
 
 ### Inline
