@@ -8,10 +8,18 @@ Extract expression to let binding
 1. Select the expression to extract
 2. Use command (ctrl+shift+R)
 
+* Extracts lambdas 
+![5-example-extractLet_lambda](https://raw.githubusercontent.com/dmannock/vscode-fsharp-refactor/master/docs/5-example-extractLet_lambda.gif)
+
+* Extracts strings 
+![6-example-extractLet_string](https://raw.githubusercontent.com/dmannock/vscode-fsharp-refactor/master/docs/6-example-extractLet_string.gif)
+
 ### Inline
 Inline binding 
 1. Move cursor to binding or a usage
 2. Use command (ctrl+shift+I)
+
+![2-example-inlineLet](https://raw.githubusercontent.com/dmannock/vscode-fsharp-refactor/master/docs/2-example-inlineLet.gif)
 
 Note: you can customise the hotkeys (file > preference > keyboard shortcuts)
 
