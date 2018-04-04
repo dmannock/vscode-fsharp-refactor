@@ -50,7 +50,7 @@ export function lambdaBindingFromSelection(text: string)  {
 }
 
 export const matchBindingLine = (bindingNameToMatch = "\\S+") => (text): IMatchedBindingLine => {
-    const matched = new RegExp(`^(\\s+)(let)\\s+(${bindingNameToMatch})\\s+=\\s+([\\s\\S]+)`).exec(text);
+    const matched = new RegExp(`^(\\s+)(let)\\s+\\b(${bindingNameToMatch})\\b\\s+=\\s+([\\s\\S]+)`).exec(text);
     if (!matched) {
         return null;
     }
@@ -65,15 +65,15 @@ export const matchBindingLine = (bindingNameToMatch = "\\S+") => (text): IMatche
 
 export function wordIndexesInText(text: string, toFind: string): number[] {
     const found = [];
-    let lastWordIndex = -1;
-    while (true) {
-        lastWordIndex = text.indexOf(toFind, lastWordIndex + 1);
-        if (lastWordIndex === -1) {
-            break;
+    const regex = new RegExp(`\\b${toFind}\\b`, "g");
+    let match;
+    do {
+        match = regex.exec(text);
+        if (match == null) {
+            return found;
         }
-        found.push(lastWordIndex);
-    }
-    return found;
+        found.push(match.index);
+    } while (true)
 }
 
 export function getExtractedString(textLine: string, selectionStartPos: number, selectionEndPos: number) {

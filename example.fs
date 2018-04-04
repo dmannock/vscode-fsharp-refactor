@@ -47,3 +47,15 @@ let zshPath = "/usr/bin/zsh"
 // let prefix = "/usr/bin/"
 // let bashPath = prefix + "bash"
 // let zshPath = prefix + "zsh"
+
+//[x] example 8  ////////////////////////////////////////
+let inlineTestSimilarName arg1 =
+        let inlineMe = 1 + arg1
+        let inlineMeWithSimilarName = inlineMe * 2 / (3 - inlineMe)
+        inlineMeWithSimilarName
+
+//[x] example 9  ////////////////////////////////////////
+let inlineTestSimilarName2 arg1 =
+        let inlineMe = 1 + arg1
+        let inlineMeWithSimilarName = inlineMe * 2 / (3 - inlineMe)
+        inlineMeWithSimilarName

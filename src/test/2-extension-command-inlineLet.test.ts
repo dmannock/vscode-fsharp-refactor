@@ -14,7 +14,7 @@ suite("Extension 'inlineLet' Command Tests", () => {
         let inlineMe = 1 + arg1
         inlineMe * 2 / (3 - inlineMe)`,
         expectedContent: `let inlineTest arg1 =
-        1 + arg1 * 2 / (3 - 1 + arg1)`,
+        (1 + arg1) * 2 / (3 - (1 + arg1))`,
         // select inlineMe binding on line 1
         selection: createSelection(1, 12, 1, 12),
         action: inlineLet,
@@ -39,10 +39,37 @@ suite("Extension 'inlineLet' Command Tests", () => {
         expectedContent: `let inlineTest arg1 =
         let dontInline = 12345
         (1 + arg1) * 2 / (3 - (1 + arg1)) + dontInline`,
-        // select inlineMe binding on line 1
+        // select inlineMe binding on line 3
         selection: createSelection(3, 30, 3, 30),
         action: inlineLet,
-    }]
+    },
+    {
+        description: "should inline let binding from declaration leaving similar binding name (example 8)",
+        content: `let inlineTestSimilarName arg1 =
+        let inlineMe = 1 + arg1
+        let inlineMeWithSimilarName = inlineMe * 2 / (3 - inlineMe)
+        inlineMeWithSimilarName`,
+        expectedContent: `let inlineTestSimilarName arg1 =
+        let inlineMeWithSimilarName = (1 + arg1) * 2 / (3 - (1 + arg1))
+        inlineMeWithSimilarName`,
+        // select inlineMe binding on line 1
+        selection: createSelection(1, 12, 1, 12),
+        action: inlineLet,
+    },
+    {
+        description: "should inline let binding from usage at end of context leaving similar binding name (example 9)",
+        content: `let inlineTestSimilarName2 arg1 =
+        let inlineMe = 1 + arg1
+        let inlineMeWithSimilarName = inlineMe * 2 / (3 - inlineMe)
+        inlineMeWithSimilarName`,
+        expectedContent: `let inlineTestSimilarName arg1 =
+        let inlineMeWithSimilarName = (1 + arg1) * 2 / (3 - (1 + arg1))
+        inlineMeWithSimilarName`,
+        // select inlineMe binding on line 2
+        selection: createSelection(2, 59, 2, 67),
+        action: inlineLet,
+    }
+]
     .forEach(runComparisonTest);
 
 });

@@ -68,9 +68,9 @@ export async function inlineLet(editor: vscode.TextEditor): Promise<boolean> {
         return false;
     }
     const currentLine = document.lineAt(selectionDetails.line);
-    const currentLineRegexMatch = matchBindingLine()(currentLine.text);
+    const currentLineRegexMatch = matchBindingLine(selectionDetails.text)(currentLine.text);
     if (currentLineRegexMatch) {
-        return await inlineAllOccurrences(editor, currentLineRegexMatch, currentLine);
+        return await inlineAllOccurrences(editor, currentLineRegexMatch, currentLine, true);
     } else {
         const bindingDeclaration = getBindingDeclarationAbove(document, selectionDetails.text,
             selectionDetails.line, currentLine.firstNonWhitespaceCharacterIndex);
