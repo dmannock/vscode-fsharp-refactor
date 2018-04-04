@@ -73,7 +73,7 @@ export function wordIndexesInText(text: string, toFind: string): number[] {
             return found;
         }
         found.push(match.index);
-    } while (true)
+    } while (true);
 }
 
 export function getExtractedString(textLine: string, selectionStartPos: number, selectionEndPos: number) {

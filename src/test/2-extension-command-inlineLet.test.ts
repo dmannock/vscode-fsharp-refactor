@@ -62,14 +62,13 @@ suite("Extension 'inlineLet' Command Tests", () => {
         let inlineMe = 1 + arg1
         let inlineMeWithSimilarName = inlineMe * 2 / (3 - inlineMe)
         inlineMeWithSimilarName`,
-        expectedContent: `let inlineTestSimilarName arg1 =
+        expectedContent: `let inlineTestSimilarName2 arg1 =
         let inlineMeWithSimilarName = (1 + arg1) * 2 / (3 - (1 + arg1))
         inlineMeWithSimilarName`,
         // select inlineMe binding on line 2
         selection: createSelection(2, 59, 2, 67),
         action: inlineLet,
-    }
-]
+    }]
     .forEach(runComparisonTest);
 
 });
