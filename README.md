@@ -34,3 +34,22 @@ If you are here you probably have this covered.
 
 ## Roadmap
 who knows (see todos.txt for now)
+
+## Building & Useful
+
+### Full Build
+Runs the full build process including:
+* linting
+* unit tests
+* vscode tests
+* extension artifacts
+
+``
+npm run build
+``
+### Test Watcher
+Runs unit tests when changes are detected.
+
+``
+npm run unittest:watch
+``
