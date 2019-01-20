@@ -2,7 +2,7 @@
     "name": "vscode-fsharp-refactor",
     "displayName": "vscode fsharp refactor",
     "description": "F# refactoring tools for vscode",
-    "version": "0.5.4",
+    "version": "0.5.5",
     "publisher": "danmannock",
     "author": "Dan Mannock",
     "engines": {
