@@ -81,23 +81,37 @@ export function getExtractedString(textLine: string, selectionStartPos: number, 
     const quoteChars = `"`;
     const selectedText = textLine.substring(selectionStartPos, selectionEndPos);
 
-    const isStartSelected = selectedText[0] === quoteChars;
-    const isEndSelected = selectedText[selectedText.length - 1] === quoteChars;
+    const { hasStartQuote, hasEndQuote, containsWholeQuotedString } = stringQuoteDetails(selectedText, quoteChars);
 
     const textBeforeSelection = textLine.substring(0, selectionStartPos);
     const mid = textLine.substring(selectionStartPos, selectionStartPos);
     const textAfterSelection = textLine.substring(selectionEndPos, Infinity);
 
-    const extractedText = `${!isStartSelected ? `"` : ""}${selectedText}${!isEndSelected ? `"` : ""}`;
-    const newLine = `${textBeforeSelection}`
-        + `${isStartSelected && !isEndSelected
-            ? `${initialBindingName} + ${quoteChars}${textAfterSelection}` : ""}`
-        + `${isEndSelected && !isStartSelected
-            ? `${mid}${quoteChars} + ${initialBindingName}` : ""}`
-        + `${!isStartSelected && !isEndSelected
-            ? `${quoteChars} + ${initialBindingName} + "${textAfterSelection}` : "" }`;
+    const extractedText = `${!hasStartQuote && !containsWholeQuotedString
+        ? `"` : ""}${selectedText}${!hasEndQuote ? `"` : ""}`;
+
+    let newLine = "";
+    // issue #1 - added to resolve that and only that
+    if (!hasStartQuote && hasEndQuote && containsWholeQuotedString) {
+        newLine = `${textBeforeSelection}${initialBindingName}`;
+    } else {
+        newLine = `${textBeforeSelection}`
+            + `${hasStartQuote && !hasEndQuote
+                ? `${initialBindingName} + ${quoteChars}${textAfterSelection}` : ""}`
+            + `${hasEndQuote && !hasStartQuote
+                ? `${mid}${quoteChars} + ${initialBindingName}` : ""}`
+            + `${!hasStartQuote && !hasEndQuote
+                ? `${quoteChars} + ${initialBindingName} + "${textAfterSelection}` : "" }`;
+    }
     return {
         extractedText,
         newLine,
     };
+}
+
+export function stringQuoteDetails(text: string, quoteChar: string = `"`) {
+    const hasStartQuote = text[0] === quoteChar;
+    const hasEndQuote = text[text.length - 1] === quoteChar;
+    const containsWholeQuotedString = text.split("").filter((c) => c === quoteChar).length === 2;
+    return { hasStartQuote, hasEndQuote, containsWholeQuotedString };
 }

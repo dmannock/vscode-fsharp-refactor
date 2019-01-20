@@ -59,3 +59,12 @@ let inlineTestSimilarName2 arg1 =
         let inlineMe = 1 + arg1
         let inlineMeWithSimilarName = inlineMe * 2 / (3 - inlineMe)
         inlineMeWithSimilarName
+
+//[] issue #1  ////////////////////////////////////////
+//Extracting a snippet with a string closing string lteral symbol at the end mangles the refactored let expression
+let str = types |> Array.map fsSig |> String.concat ", "
+
+//should refactor to:
+// let extracted = types |> Array.map fsSig |> String.concat ", "
+// let str = extracted
+

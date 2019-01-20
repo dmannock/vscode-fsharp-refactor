@@ -2,6 +2,7 @@ import * as assert from "assert";
 import {
     ensureParenthesesWrapping,
     getExtractedString,
+    stringQuoteDetails,
     wordIndexesInText
  } from "../general-funcs";
 
@@ -79,6 +80,62 @@ describe("General Funcs: getExtractedString", () => {
 
         assert.equal(extractedText, expectedExtractedString);
         assert.equal(newLine, expectedWholeLine);
+    });
+
+    it("extracts selection with quoted string at the end", () => {
+        const wholeLine = `let str = types |> Array.map fsSig |> String.concat ", "`;
+        // select bash
+        const { extractedText, newLine } = getExtractedString(wholeLine, 10, 57);
+
+        const expectedExtractedString = `types |> Array.map fsSig |> String.concat ", "`;
+        const expectedWholeLine = `let str = extracted`;
+
+        assert.equal(extractedText, expectedExtractedString);
+        assert.equal(newLine, expectedWholeLine);
+    });
+
+});
+
+describe("General Funcs: selectedStringPositions", () => {
+
+    it("start and end quotes", () => {
+        const selected = `"/usr/bin/bash"`;
+        assert.deepEqual(stringQuoteDetails(selected),
+        {
+            containsWholeQuotedString: true,
+            hasEndQuote: true,
+            hasStartQuote: true,
+        });
+    });
+
+    it("no start but with end quotes", () => {
+        const selected = `/usr/bin/bash"`;
+        assert.deepEqual(stringQuoteDetails(selected),
+        {
+            containsWholeQuotedString: false,
+            hasEndQuote: true,
+            hasStartQuote: false,
+        });
+    });
+
+    it("start but no end quotes", () => {
+        const selected = `"/usr/bin/bash`;
+        assert.deepEqual(stringQuoteDetails(selected),
+        {
+            containsWholeQuotedString: false,
+            hasEndQuote: false,
+            hasStartQuote: true,
+        });
+    });
+
+    it("no start quotes but ends with a complete string literal", () => {
+        const selected = `types |> Array.map fsSig |> String.concat ", "`;
+        assert.deepEqual(stringQuoteDetails(selected),
+        {
+            containsWholeQuotedString: true,
+            hasEndQuote: true,
+            hasStartQuote: false,
+        });
     });
 
 });
