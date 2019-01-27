@@ -27,8 +27,10 @@ export function runComparisonTest({
         editor.selection = selection;
         const actionResult = await action(editor);
         const actualText = await getAllText(editor.document);
+        const normalisedActualText = actualText.replace("\r\n", "\n");
+        const normalisedExpectedContent = expectedContent.replace("\r\n", "\n");
         assert.ok(actionResult);
-        assert.equal(actualText, expectedContent);
+        assert.equal(normalisedActualText, normalisedExpectedContent);
     });
 }
 
