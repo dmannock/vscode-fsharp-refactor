@@ -76,7 +76,7 @@
         "ts-node": "^5.0.1",
         "tslint": "^5.12.1",
         "typescript": "^2.9.2",
-        "vscode": "^1.1.26"
+        "vscode": "^1.1.33"
     },
     "license": "MIT",
     "repository": {
