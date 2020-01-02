@@ -66,7 +66,8 @@ export function getWordInstancesBelow(doc: vscode.TextDocument, word: string,
     const positions = [];
     for (let i = startingLine + 1; i < doc.lineCount; i++) {
         const currentLine = doc.lineAt(i);
-        if (currentLine.firstNonWhitespaceCharacterIndex < indentationCharCount) {
+        if ((currentLine.firstNonWhitespaceCharacterIndex < indentationCharCount && !currentLine.isEmptyOrWhitespace)
+            || (indentationCharCount < 4 && currentLine.isEmptyOrWhitespace)) {
             break;
         }
         wordIndexesInText(currentLine.text, word)

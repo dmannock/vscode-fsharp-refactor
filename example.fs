@@ -68,3 +68,14 @@ let str = types |> Array.map fsSig |> String.concat ", "
 // let extracted = types |> Array.map fsSig |> String.concat ", "
 // let str = extracted
 
+//[x] issue #4  ////////////////////////////////////////
+// I cannot inline the expectedEvents let-binding, but if I remove the empty line between the definition and its usage, I can inline it.
+let tests =
+    testList "X" [
+
+        test "Y" {
+            let expectedEvents = []
+
+            equal [] expectedEvents ""
+        }
+    ]

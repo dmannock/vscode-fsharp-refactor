@@ -68,6 +68,23 @@ suite("Extension 'inlineLet' Command Tests", () => {
         // select inlineMe binding on line 2
         selection: createSelection(2, 59, 2, 67),
         action: inlineLet,
+    },
+    {
+        description: "should inline let binding from usage with empty line below (example 10)",
+        content:
+`test "Y" {
+    let expectedEvents = []
+
+    equal [] expectedEvents ""
+}`,
+        expectedContent:
+`test "Y" {
+
+    equal [] ([]) ""
+}`,
+        // select expectedEvents binding on line 2
+        selection: createSelection(1, 10, 1, 10),
+        action: inlineLet,
     }]
     .forEach(runComparisonTest);
 
