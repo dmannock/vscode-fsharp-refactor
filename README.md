@@ -2,6 +2,8 @@
 Additional F# refactoring tools for vscode. 
 Less keystrokes, more F#, more fun(ctional programming).
 
+Available in the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=danmannock.vscode-fsharp-refactor)
+
 ## Features
 ### Extract
 Extract expression to let binding

@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.5.7
+- Issue Fixed #2 - mac keybinding for inlining
+- Issue Fixed #4 - empty line preventing inlining
+- packages security audit & fixes
+
 ## 0.5.5
 - Issue Fixed #1 - Extracting a snippet with a string closing string lteral symbol at the end
 
