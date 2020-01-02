@@ -53,7 +53,7 @@
             {
                 "command": "fsharp-refactor.inlineLet",
                 "key": "Ctrl+Shift+I",
-                "mac": "cmd+Shift+R",
+                "mac": "cmd+Shift+I",
                 "when": "editorTextFocus && editorLangId == 'fsharp'"
             }
         ]
