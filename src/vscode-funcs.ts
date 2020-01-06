@@ -18,7 +18,7 @@ export function getBindingDeclarationAbove(doc: vscode.TextDocument, bindingName
     const matchBindingLineForName = matchBindingLine(bindingName);
     for (let i = startingLine - 1; i >= 0; i--) {
         currentLine = doc.lineAt(i);
-        if (currentLine.firstNonWhitespaceCharacterIndex > currentLine.firstNonWhitespaceCharacterIndex) {
+        if (currentLine.firstNonWhitespaceCharacterIndex < indentationCharCount && !currentLine.isEmptyOrWhitespace) {
             break;
         }
         const matched = matchBindingLineForName(currentLine.text);
@@ -66,8 +66,7 @@ export function getWordInstancesBelow(doc: vscode.TextDocument, word: string,
     const positions = [];
     for (let i = startingLine + 1; i < doc.lineCount; i++) {
         const currentLine = doc.lineAt(i);
-        if ((currentLine.firstNonWhitespaceCharacterIndex < indentationCharCount && !currentLine.isEmptyOrWhitespace)
-            || (indentationCharCount < 4 && currentLine.isEmptyOrWhitespace)) {
+        if (currentLine.firstNonWhitespaceCharacterIndex < indentationCharCount && !currentLine.isEmptyOrWhitespace) {
             break;
         }
         wordIndexesInText(currentLine.text, word)

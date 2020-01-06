@@ -70,7 +70,7 @@ suite("Extension 'inlineLet' Command Tests", () => {
         action: inlineLet,
     },
     {
-        description: "should inline let binding from usage with empty line below (example 10)",
+        description: "should inline let binding from binding with empty line below (issue #4)",
         content:
 `test "Y" {
     let expectedEvents = []
@@ -82,8 +82,26 @@ suite("Extension 'inlineLet' Command Tests", () => {
 
     equal [] ([]) ""
 }`,
-        // select expectedEvents binding on line 2
+        // select expectedEvents binding on line 1
         selection: createSelection(1, 10, 1, 10),
+        action: inlineLet,
+    },
+    {
+        description:
+        "should inline let binding from binding with empty line below & usage in another scope (example 10)",
+        content:
+`let expectedEvents = []
+
+let inlineScope initialEvents =
+
+    initialEvents = expectedEvents`,
+        expectedContent:
+`
+let inlineScope initialEvents =
+
+    initialEvents = ([])`,
+        // select expectedEvents binding on line 0
+        selection: createSelection(0, 6, 0, 6),
         action: inlineLet,
     }]
     .forEach(runComparisonTest);

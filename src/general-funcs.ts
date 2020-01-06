@@ -50,7 +50,7 @@ export function lambdaBindingFromSelection(text: string)  {
 }
 
 export const matchBindingLine = (bindingNameToMatch = "\\S+") => (text): IMatchedBindingLine => {
-    const matched = new RegExp(`^(\\s+)(let)\\s+\\b(${bindingNameToMatch})\\b\\s+=\\s+([\\s\\S]+)`).exec(text);
+    const matched = new RegExp(`^(\\s*)(let)\\s+\\b(${bindingNameToMatch})\\b\\s*=\\s*([\\s\\S]+)`).exec(text);
     if (!matched) {
         return null;
     }

@@ -25,11 +25,10 @@ export function runComparisonTest({
     test(description, async () => {
         const editor = await preTestSetup(content);
         editor.selection = selection;
-        const actionResult = await action(editor);
+        await action(editor);
         const actualText = await getAllText(editor.document);
         const normalisedActualText = actualText.replace("\r\n", "\n");
         const normalisedExpectedContent = expectedContent.replace("\r\n", "\n");
-        assert.ok(actionResult);
         assert.equal(normalisedActualText, normalisedExpectedContent);
     });
 }
