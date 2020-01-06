@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.5.9
+- Issue Fixed #5 - Inline binding with type annotations
+
 ## 0.5.7
 - Issue Fixed #2 - mac keybinding for inlining
 - Issue Fixed #4 - empty line preventing inlining

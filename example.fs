@@ -62,7 +62,7 @@ let inlineTestSimilarName2 arg1 =
 
 //[x] issue #1  ////////////////////////////////////////
 //Extracting a snippet with a string closing string lteral symbol at the end mangles the refactored let expression
-let str = Array.map id >> String.concat ", "
+let commaJoin = Array.map string >> String.concat ", "
 
 //should refactor to:
 // let extracted = Array.map id >> String.concat ", "
@@ -82,3 +82,10 @@ let expectedEvents = []
 
 let inlineScope initialEvents =
     initialEvents = expectedEvents
+
+
+//[x] issue #5  ////////////////////////////////////////
+// inline with type annotations
+let expectedEvents :int list = []
+let checkCurrent evts =
+    evts = expectedEvents

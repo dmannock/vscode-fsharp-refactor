@@ -2,6 +2,7 @@ import * as assert from "assert";
 import {
     ensureParenthesesWrapping,
     getExtractedString,
+    matchBindingLine,
     stringQuoteDetails,
     wordIndexesInText
  } from "../general-funcs";
@@ -135,6 +136,34 @@ describe("General Funcs: selectedStringPositions", () => {
             containsWholeQuotedString: true,
             hasEndQuote: true,
             hasStartQuote: false,
+        });
+    });
+
+});
+
+describe("General Funcs: matchBindingLine", () => {
+
+    it("binding returns parts for binding name", () => {
+        const line = `    let inlineMe = 1 + arg1`;
+        assert.deepEqual(matchBindingLine("inlineMe")(line),
+        {
+            binding: "let",
+            bindingName: "inlineMe",
+            expression: "1 + arg1",
+            indentation: "    ",
+            typeAnnotation: null,
+        });
+    });
+
+    it("binding returns parts for binding name with type annotation", () => {
+        const line = `let expectedEvents :int list = []`;
+        assert.deepEqual(matchBindingLine("expectedEvents")(line),
+        {
+            binding: "let",
+            bindingName: "expectedEvents",
+            expression: "[]",
+            indentation: "",
+            typeAnnotation: "int list",
         });
     });
 

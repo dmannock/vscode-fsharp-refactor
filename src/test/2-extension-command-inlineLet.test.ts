@@ -103,6 +103,24 @@ let inlineScope initialEvents =
         // select expectedEvents binding on line 0
         selection: createSelection(0, 6, 0, 6),
         action: inlineLet,
+    },
+    {
+        description:
+        "should inline let binding with type annotations (issue #5)",
+        content:
+`test "Y" {
+    let expectedEvents: int list = []
+
+    equal [] expectedEvents ""
+}`,
+        expectedContent:
+`test "Y" {
+
+    equal [] ([]) ""
+}`,
+        // select expectedEvents binding on line 0
+        selection: createSelection(1, 8, 1, 8),
+        action: inlineLet,
     }]
     .forEach(runComparisonTest);
 
