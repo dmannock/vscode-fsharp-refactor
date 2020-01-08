@@ -18,9 +18,6 @@ export function getBindingDeclarationAbove(doc: vscode.TextDocument, bindingName
     const matchBindingLineForName = matchBindingLine(bindingName);
     for (let i = startingLine - 1; i >= 0; i--) {
         currentLine = doc.lineAt(i);
-        if (currentLine.firstNonWhitespaceCharacterIndex < indentationCharCount && !currentLine.isEmptyOrWhitespace) {
-            break;
-        }
         const matched = matchBindingLineForName(currentLine.text);
         if (matched) {
             return {
