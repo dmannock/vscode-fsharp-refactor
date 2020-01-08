@@ -151,6 +151,7 @@ describe("General Funcs: matchBindingLine", () => {
             bindingName: "inlineMe",
             expression: "1 + arg1",
             indentation: "    ",
+            requiresParens: true,
             typeAnnotation: null,
         });
     });
@@ -163,6 +164,7 @@ describe("General Funcs: matchBindingLine", () => {
             bindingName: "expectedEvents",
             expression: "[]",
             indentation: "",
+            requiresParens: false,
             typeAnnotation: "int list",
         });
     });

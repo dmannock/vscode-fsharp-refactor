@@ -80,7 +80,7 @@ suite("Extension 'inlineLet' Command Tests", () => {
         expectedContent:
 `test "Y" {
 
-    equal [] ([]) ""
+    equal [] [] ""
 }`,
         // select expectedEvents binding on line 1
         selection: createSelection(1, 10, 1, 10),
@@ -99,7 +99,7 @@ let inlineScope initialEvents =
 `
 let inlineScope initialEvents =
 
-    initialEvents = ([])`,
+    initialEvents = []`,
         // select expectedEvents binding on line 0
         selection: createSelection(0, 6, 0, 6),
         action: inlineLet,
@@ -116,7 +116,7 @@ let inlineScope initialEvents =
         expectedContent:
 `test "Y" {
 
-    equal [] ([]) ""
+    equal [] [] ""
 }`,
         // select expectedEvents binding on line 0
         selection: createSelection(1, 8, 1, 8),

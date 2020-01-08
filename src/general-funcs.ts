@@ -14,6 +14,7 @@ export interface IMatchedBindingLine {
     bindingName: string;
     expression: string;
     typeAnnotation: string;
+    requiresParens: boolean;
 }
 
 export function ensureParenthesesWrapping(text) {
@@ -51,17 +52,19 @@ export function lambdaBindingFromSelection(text: string)  {
 }
 
 export const matchBindingLine = (bindingNameToMatch = "\\S+") => (text): IMatchedBindingLine => {
-    const pattern = `^(\\s*)(let)\\s+\\b(${bindingNameToMatch})\\b\\s*(:([\\s\\S]+))?\\s*=\\s*([\\s\\S]+)`;
+    const pattern = `^(\\s*)(let)\\s+\\b(${bindingNameToMatch})\\b\\s*(:([\\s\\S]+))?\\s*=\\s*([\\s\\S]+)$`;
     const matched = new RegExp(pattern).exec(text);
     if (!matched) {
         return null;
     }
     const [, indentation, binding, bindingName, , typeAnnotation, expression] = matched;
+    const requiresParens = expression.trim().includes(" ") || expression.includes("(", 1);
     return {
         binding,
         bindingName,
         expression,
         indentation,
+        requiresParens,
         typeAnnotation: typeAnnotation && typeAnnotation.trim(),
     };
 };

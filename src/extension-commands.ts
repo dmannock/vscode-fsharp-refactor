@@ -70,25 +70,23 @@ export async function inlineLet(editor: vscode.TextEditor): Promise<boolean> {
     const currentLine = document.lineAt(selectionDetails.line);
     const currentLineRegexMatch = matchBindingLine(selectionDetails.text)(currentLine.text);
     if (currentLineRegexMatch) {
-        return await inlineAllOccurrences(editor, currentLineRegexMatch, currentLine, true);
+        return await inlineAllOccurrences(editor, currentLineRegexMatch, currentLine);
     } else {
         const bindingDeclaration = getBindingDeclarationAbove(document, selectionDetails.text,
             selectionDetails.line, currentLine.firstNonWhitespaceCharacterIndex);
         if (bindingDeclaration) {
-            // wrapped in brackets to ensure precedence is preserved (without knowing usage context)
             return await inlineAllOccurrences(editor, bindingDeclaration.matchedLineRegexMatch,
-                bindingDeclaration.matchedLine, true);
+                bindingDeclaration.matchedLine);
         }
     }
 }
 
 async function inlineAllOccurrences(editor: vscode.TextEditor,
                                     matchedBindingLine: IMatchedBindingLine,
-                                    currentLine: vscode.TextLine,
-                                    wrapWithParentheses: boolean = false
+                                    currentLine: vscode.TextLine
 ): Promise<boolean> {
     const document = editor.document;
-    const { bindingName, expression } = matchedBindingLine;
+    const { bindingName, expression, requiresParens } = matchedBindingLine;
     const occurrencesToReplace = getWordInstancesBelow(document, bindingName,
         currentLine.lineNumber, currentLine.firstNonWhitespaceCharacterIndex);
     if (occurrencesToReplace.length === 0) {
@@ -98,7 +96,7 @@ async function inlineAllOccurrences(editor: vscode.TextEditor,
     return editor.edit((eb) => {
         eb.delete(currentLine.rangeIncludingLineBreak);
         for (const range of occurrencesToReplace) {
-            eb.replace(range, wrapWithParentheses ? `(${expression})` : expression);
+            eb.replace(range, requiresParens ? `(${expression})` : expression);
         }
     });
 }
