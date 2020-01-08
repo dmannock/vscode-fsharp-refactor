@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.6.1
+- Fixed feature added by Issue #5 - can now inline binding with type annotations from usage
+
+## 0.6.0
+- Issue Fixed #3 - Inline binding doesn't add brackets for single expressions
+
 ## 0.5.9
 - Issue Fixed #5 - Inline binding with type annotations
 
