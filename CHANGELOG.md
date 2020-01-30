@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.6.2
+- Fixed Issue #6 - extracting selection with a lambda now checks if the whole selection is a lambda
+
 ## 0.6.1
 - Fixed feature added by Issue #5 - can now inline binding with type annotations from usage
 
