@@ -1,6 +1,6 @@
 "use strict";
 
-const lambdaRegexPattern = `\\(fun([^-]+)->(.+)\\)`;
+const lambdaRegexPattern = `^\\(fun([^-]+)->(.+)\\)$`;
 const createStringRegexPattern =
     (selectedText) => `${selectedText.startsWith(`"`)
         ? ""

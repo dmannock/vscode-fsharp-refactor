@@ -89,3 +89,10 @@ let inlineScope initialEvents =
 let expectedEvents :int list = []
 let checkCurrent evts =
     evts = expectedEvents
+
+//[x] issue #6  ////////////////////////////////////////
+// extracting let binding when selection contains a lambda and other expressions
+let getter() = [1;2]
+let extractLambda =
+    let res = getter() |> List.map (fun a -> a * 2) |> List.sum
+    res

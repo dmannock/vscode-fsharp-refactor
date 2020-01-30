@@ -48,6 +48,23 @@ suite("Extension 'extractLet' Command Tests", () => {
         // select (fun acc n -> (n |> Array.toList) @ acc ) on line 1
         selection: createSelection(1, 35, 1, 76),
         action: extractLet,
+    },
+    {
+        description: "should extract let binding when selection contains a lambda and other expressions (issue 6)",
+        content:
+`let getter() = [1;2]
+let extractLambda =
+    let res = getter() |> List.map (fun a -> a * 2) |> List.sum
+    res`,
+        expectedContent:
+`let getter() = [1;2]
+let extractLambda =
+    let extracted = getter() |> List.map (fun a -> a * 2)
+    let res = extracted |> List.sum
+    res`,
+        // select getter() |> List.map (fun a -> a * 2) on line 2
+        selection: createSelection(2, 14, 2, 51),
+        action: extractLet,
     }]
     .forEach(runComparisonTest);
 
